@@ -7,3 +7,7 @@ def getRabbitAndChicken(amount, feet):
 if __name__ == '__main__':
     ra, ch = getRabbitAndChicken(83, 240)
     print(ra, ch)
+
+    
+
+
