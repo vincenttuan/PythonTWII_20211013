@@ -25,4 +25,4 @@ def getData(yyyy, mm, dd):
 
 if __name__ == '__main__':
     list = getData(2021, 11, 3)
-    print(list)
+    print(len(list), list)
