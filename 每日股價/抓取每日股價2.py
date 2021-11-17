@@ -26,5 +26,5 @@ df = df.dropna(axis=1, how='all')
 # 顯示所有欄位/列數
 #pd.set_option('display.max_columns', None)
 #pd.set_option('display.max_rows', None)
-# 查出收盤價比開盤價高出 7% 的股票
-print(df[df['收盤價'] / df['開盤價'] > 1.07])
+# 查出收盤價比開盤價高出 8% 的股票
+print(df[df['收盤價'] / df['開盤價'] > 1.08])
