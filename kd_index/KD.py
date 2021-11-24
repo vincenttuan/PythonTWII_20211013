@@ -39,9 +39,44 @@ if __name__ == '__main__':
     #print(tx)
     print('---------------------------------------------------------------------------')
     # apply() 的使用
-    def add(n):
-        return n + 3
-    df = pd.DataFrame({'x': [1, 2, 3], 'y': [4, 5, 6]})
-    print(df)
-    df['new_y'] = df['y'].apply(add)
-    print(df)
+    # def add(n):
+    #     return n + 3
+    # df = pd.DataFrame({'x': [1, 2, 3], 'y': [4, 5, 6]})
+    # print(df)
+    # df['new_y'] = df['y'].apply(add)
+    # print(df)
+    print('---------------------------------------------------------------------------')
+    # 計算 K 值
+    # K 是 RSV 和前一日 K 值的加權平均
+    # K = 2/3 * (昨日 K 值) + 1/3 * (今日 RSV)
+    K = 0
+    def KValue(rsv):
+        global K
+        K = (2/3) * K + (1/3) * rsv
+        return K
+    tx['K'] = 0
+    tx['K'] = tx['RSV'].apply(KValue)
+    #print(tx)
+    print('---------------------------------------------------------------------------')
+    # 計算 D 值
+    # D 是 K值 和前一日 D值 的加權平均
+    # D = 2/3 * (昨日 D 值) + 1/3 * (今日的 K 值)
+    D = 0
+    def DValue(k):
+        global D
+        D = (2/3) * D + (1/3) * k
+        return D
+    tx['D'] = 0
+    tx['D'] = tx['K'].apply(DValue)
+    print(tx)
+    print('---------------------------------------------------------------------------')
+    # 繪圖
+    k = tx['K']
+    d = tx['D']
+    close = tx['收盤價']
+    k.plot(label="K", color='orange')
+    d.plot(label="D", color='blue')
+    close.plot(label="close", color='gray')
+    plt.legend()
+    plt.show()
+
