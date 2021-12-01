@@ -54,10 +54,12 @@ if __name__ == '__main__':
     # 編指數
     index = price[cond].mean(axis=1)
     print(index)
-    # 繪圖
-    index.plot()
-    plt.show()
+
     # ROI
     diff = index.iloc[-1] - index.iloc[0]
     roi = diff / index.iloc[0]
     print(diff, roi)
+
+    # 繪圖
+    index.plot()
+    plt.show()
