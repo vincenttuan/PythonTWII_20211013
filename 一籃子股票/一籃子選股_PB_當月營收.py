@@ -50,3 +50,10 @@ if __name__ == '__main__':
     # condition1 & condition2 (交集)
     cond = condition1.intersection(condition2)
     print("cond:", cond)
+
+    # 編指數
+    index = price[cond].mean(axis=1)
+    print(index)
+    # 繪圖
+    index.plot()
+    plt.show()
