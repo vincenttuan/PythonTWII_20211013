@@ -57,3 +57,7 @@ if __name__ == '__main__':
     # 繪圖
     index.plot()
     plt.show()
+    # ROI
+    diff = index.iloc[-1] - index.iloc[0]
+    roi = diff / index.iloc[0]
+    print(diff, roi)
