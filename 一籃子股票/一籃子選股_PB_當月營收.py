@@ -20,4 +20,15 @@ if __name__ == '__main__':
     # date -> index, stock_id -> columns, 收盤價 -> data
     price = pd.read_sql(sql, conn, parse_dates=['date']).pivot(index='date', columns='stock_id')['收盤價']
     print(price)
-    
+
+    # PB 股價淨值比
+    sql = '''
+            SELECT CAST(symbol as varchar(10)) as stock_id, ts as date, pb 
+            FROM BWIBBU
+            where date == '%s'
+          ''' % (tday)
+
+    print(sql)
+    pb = pd.read_sql(sql, conn, parse_dates=['date']).pivot(index='date', columns='stock_id')['pb']
+    print(pb)
+
