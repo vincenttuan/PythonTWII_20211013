@@ -32,3 +32,11 @@ if __name__ == '__main__':
     pb = pd.read_sql(sql, conn, parse_dates=['date']).pivot(index='date', columns='stock_id')['pb']
     print(pb)
 
+    # 當月營收
+    sql = '''
+            SELECT CAST(stock_id as varchar(10)) as stock_id, date, 當月營收 FROM monthly_report
+            where date < '%s'
+          ''' % (tday)
+    print(sql)
+    rev = pd.read_sql(sql, conn, parse_dates=['date']).pivot(index='date', columns='stock_id')['當月營收']
+    print(rev)
