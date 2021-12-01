@@ -12,6 +12,7 @@ if __name__ == '__main__':
     # 這一天需要有交易
     tday = datetime.date(2021, 1, 4)
     conn = sqlite3.connect('../資料庫/財經資料庫.db')
+    # 股價 >= 2021, 1, 4
     sql = '''
            SELECT stock_id, date, 收盤價 FROM price
            where date >= '%s'
@@ -21,7 +22,7 @@ if __name__ == '__main__':
     price = pd.read_sql(sql, conn, parse_dates=['date']).pivot(index='date', columns='stock_id')['收盤價']
     print(price)
 
-    # PB 股價淨值比
+    # PB 股價淨值比 = 2021, 1, 4
     sql = '''
             SELECT CAST(symbol as varchar(10)) as stock_id, ts as date, pb 
             FROM BWIBBU
@@ -32,7 +33,7 @@ if __name__ == '__main__':
     pb = pd.read_sql(sql, conn, parse_dates=['date']).pivot(index='date', columns='stock_id')['pb']
     print(pb)
 
-    # 當月營收
+    # 當月營收 < 2021, 1, 4
     sql = '''
             SELECT CAST(stock_id as varchar(10)) as stock_id, date, 當月營收 FROM monthly_report
             where date < '%s'
