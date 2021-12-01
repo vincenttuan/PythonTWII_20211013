@@ -41,3 +41,12 @@ if __name__ == '__main__':
     print(sql)
     rev = pd.read_sql(sql, conn, parse_dates=['date']).pivot(index='date', columns='stock_id')['當月營收']
     print(rev)
+
+    # 策略條件
+    condition1 = pb.columns[(pb.iloc[0] > 0.1) & (pb.iloc[0] < 0.5)]
+    print("condition1:", condition1)  # 印出符合策略1的股票
+    condition2 = rev.columns[rev.iloc[-3:].mean() > rev.iloc[-12:].mean()]
+    print("condition2:", condition2)  # 近 3 個月月營收 > 近 12 個月月營收
+    # condition1 & condition2 (交集)
+    cond = condition1.intersection(condition2)
+    print("cond:", cond)
