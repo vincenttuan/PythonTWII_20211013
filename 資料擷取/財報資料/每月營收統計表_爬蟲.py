@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 import sqlite3
+import time
 from io import StringIO
 
 def get_monthly_report(year, month):
@@ -54,8 +55,8 @@ def import_monthly_report(df, db_path):
     conn = sqlite3.connect(db_path)
     df.to_sql('monthly_report', conn, if_exists='append')
 
-
-if __name__ == '__main__':
+# 測試
+def test():
     year = 2021
     month = 10
     df = get_monthly_report(year, month)
@@ -63,4 +64,14 @@ if __name__ == '__main__':
     # 匯入資料庫
     import_monthly_report(df, '財報_Test.db')
 
-
+if __name__ == '__main__':
+    # test()
+    for year in range(2019, 2021+1):
+        for month in range(1, 12+1):
+            time.sleep(7)
+            try:
+                df = get_monthly_report(year, month)
+                import_monthly_report(df, '../../資料庫/財經資料庫.db')
+                print(year, month, "OK")
+            except Exception as e:
+                print(year, month, "Fail:", str(e))
