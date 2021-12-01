@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import sqlite3
 from io import StringIO
 
 def get_monthly_report(year, month):
@@ -43,9 +44,23 @@ def get_monthly_report(year, month):
     df.index.names = ['date', 'stock_id'] # 變更 index 名稱
     return df
 
+# 匯入資料庫
+def import_monthly_report(df):
+    # 將 df 存成 csv
+    df.to_csv('monthly_report.csv', encoding='utf_8_sig')
+    # csv 轉 df 並指定 index
+    df = pd.read_csv('monthly_report.csv', index_col=['date', 'stock_id'])
+    # 存入 sqlite
+    conn = sqlite3.connect('財報_Test.db')
+    df.to_sql('monthly_report', conn, if_exists='append')
+
 
 if __name__ == '__main__':
     year = 2021
     month = 10
     df = get_monthly_report(year, month)
     print(df)
+    # 匯入資料庫
+    import_monthly_report(df)
+
+
