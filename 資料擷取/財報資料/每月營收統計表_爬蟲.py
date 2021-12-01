@@ -27,8 +27,22 @@ def get_monthly_report(year, month):
     [df for df in dfs if df.shape[1] == 11]
     '''
     df = pd.concat([df for df in dfs if df.shape[1] == 11])
+    # 設定 column 名稱
+    #print(df.columns.get_level_values(0))
+    #print(df.columns.get_level_values(1)) # 這是我們要的欄位
+    df.columns = df.columns.get_level_values(1)
+    # 過濾資料
+    # 刪除公司代號欄位中有出現「合計」或「總計」的列
+    df = df[df['公司代號'] != '合計']
+    df = df[df['公司代號'] != '總計']
+    # 將當月營收數字化，當月營收不能變成數字的以 NaN 取代 (errors='coerce')
+    df['當月營收'] = pd.to_numeric(df['當月營收'], 'coerce')
+    # 將交易日與公司代號共列 df 的 indexes
+    df['交易日'] = '%d-%d-10' % (year, month)
+    df = df.set_index(['交易日', '公司代號'])
+    df.index.names = ['date', 'stock_id'] # 變更 index 名稱
     print(df)
-    #print(dfs)
+
 
 if __name__ == '__main__':
     year = 2021
