@@ -1,5 +1,8 @@
 import time
+
+import pandas as pd
 import requests
+from io import StringIO
 import re
 import requests.packages.urllib3
 
@@ -46,13 +49,34 @@ def send_data(rs, stock_id, viewstate, eventvalidation):
     res = rs.get('https://bsr.twse.com.tw/bshtm/bsContent.aspx', verify=False, stream=True)
     return res
 
+def parse_data(text):
+    lines = text.split('\n')
+    lines = [line for line in lines if len(line.split(',')) == 11]
+    df = pd.read_csv(StringIO('\n'.join(lines)))
+    #print(df)
+    # 取 0~4 欄位 序號,券商,價格,買進股數,賣出股數
+    one_df = df[df.columns[:5]]  # 取 0~4
+    #print(one_df)
+    # 取 6~10 欄位 序號,券商,價格,買進股數,賣出股數
+    two_df = df[df.columns[6:]]  # 取 6~10
+    # 去除 .1 欄位名
+    two_df.columns = two_df.columns.str.replace('.1', '', regex=True)
+    #print(two_df)
+    # 合併 one_df append two_df
+    df = one_df.append(two_df)
+    df = df.set_index('序號').sort_index().dropna()
+    #print(df)
+    return df
+
 if __name__ == '__main__':
     rs = requests.session()
     viewstate, eventvalidation = get_code(rs)
     print('viewstate = ' + viewstate)
     print('eventvalidation = ' + eventvalidation)
 
-    res = send_data(rs, '1101', viewstate, eventvalidation)
+    res = send_data(rs, '2330', viewstate, eventvalidation)
     res.encoding = 'big5'
-    open('test.html', 'w', encoding='utf-8').write(res.text)
+    open('test.txt', 'w', encoding='utf-8').write(res.text)
 
+    df = parse_data(res.text)
+    print(df)
