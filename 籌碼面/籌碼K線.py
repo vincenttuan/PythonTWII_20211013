@@ -68,15 +68,45 @@ def parse_data(text):
     #print(df)
     return df
 
+
 if __name__ == '__main__':
+    symbol = '1101'
+    # 顯示所有列
+    pd.set_option('display.max_rows', None)
+
     rs = requests.session()
     viewstate, eventvalidation = get_code(rs)
     print('viewstate = ' + viewstate)
     print('eventvalidation = ' + eventvalidation)
 
-    res = send_data(rs, '2330', viewstate, eventvalidation)
+    res = send_data(rs, symbol, viewstate, eventvalidation)
     res.encoding = 'big5'
     open('test.txt', 'w', encoding='utf-8').write(res.text)
 
     df = parse_data(res.text)
+    #print(df)
+
+    # 買進股數與賣出股數 轉為 int
+    df['買進股數'] = df['買進股數'].astype('int')
+    df['賣出股數'] = df['賣出股數'].astype('int')
     print(df)
+
+    # 券商總買賣
+    buy = df['買進股數'].groupby(df['券商']).sum()
+    sell = df['賣出股數'].groupby(df['券商']).sum()
+    total = buy - sell
+    print(total)
+
+    # 主力券商前 15 大
+    top_buy = total.nlargest(15)
+    print(top_buy)
+    top_sell = total.nsmallest(15)
+    print(top_sell)
+    diff = top_buy.sum() - top_sell.sum()
+    print('前 15 大券商主力指標：', diff)
+
+    # 整體買賣家數差（散戶指標）
+    diff2 = (total > 0).sum() - (total < 0).sum()
+    print('整體買賣家數差（散戶指標）', diff2)
+
+    print('symbol:', symbol)
