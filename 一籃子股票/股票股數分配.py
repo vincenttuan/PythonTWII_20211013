@@ -94,14 +94,18 @@ if __name__ == '__main__':
     diff = index.iloc[-1] - index.iloc[0]
     roi = diff / index.iloc[0]
 
-    money = int(input('請輸入最大投資金額(萬): ')) * 10000
+    #money = int(input('請輸入最大投資金額(萬): ')) * 10000
+    money = int(input('請輸入最大投資金額: ')) * 1
+
     ret, sum = portfolio(cond, money)
     print('----------------------------')
     print('買進標的股數:', ret)
     print('買進標的價格:', price.iloc[-1][ret.index])
     print('實際投資金額:', sum)
-    if len(ret) >= 5:
+    print('買進股票檔數:', len(ret))
+    if len(ret) == len(cond):
         print('報酬率: %.2f%%' % (roi * 100))
     else:
-        print('報酬率: 無(股價不足五檔)')
+        print('報酬率: 無(股價不足 %d 檔)' % (len(cond)))
 
+    ret.to_csv("stock.csv", sep="\t")
