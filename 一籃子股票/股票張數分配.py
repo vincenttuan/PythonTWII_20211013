@@ -1,4 +1,6 @@
 import sqlite3
+
+import numpy as np
 import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
@@ -20,7 +22,30 @@ def portfolio(stock_list, money):
     sql = sql.replace('\n', '')
     #print(sql)
     price = pd.read_sql(sql, conn, parse_dates=['date']).pivot(index='date', columns='stock_id')['收盤價']
-    print(price)
+    #print(price)
+    #得到 stock_list 中的最新報價
+    stock_list = price.iloc[-1][stock_list]
+    #print(stock_list)
+
+    # 考慮交易成本
+
+    while True:
+        print('--------------------------')
+        print(stock_list)
+        # 平均每一檔股票可以有多少錢買入
+        invest_money = (money / len(stock_list))
+        print('每一檔股票可以買入的金額：', invest_money)
+        # no.floor 往下取整數
+        # Ex: -1.2 = -2, 0.6 = 0, 1.2 = 1, 2.7 = 2
+        # 取到整數的張數
+        ret = np.floor(invest_money / stock_list / 1000)
+        print(ret)
+        if(ret == 0).any(): # 假設 ret 列表中有 0.0 的情況
+            stock_list = stock_list[stock_list != stock_list.max()]
+        else:
+            break
+        input('按下 1 + Enter 後繼續')
+
 
 if __name__ == '__main__':
     # 這一天需要有交易
